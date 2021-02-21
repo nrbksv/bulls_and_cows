@@ -6,6 +6,10 @@
     {% for h in history %}
         {% if h.step > 0 %}
             <p><i>Step #{{ h.step }}:  <b>{{ h.res }}</b></i></p>
+            {% if h.res == 'You got it right!' %}
+                <p>You got <b>{{ h.secret_num }}</b> in {{ h.step }} steps.</p>
+                <hr>
+            {% endif %}
         {% endif %}
     {% endfor %}
     <hr>

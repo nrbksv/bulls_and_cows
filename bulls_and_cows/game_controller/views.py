@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from random import randint
 
-history = [{'step': 0, 'res': ''}]
+history = [{'secret_num': [], 'step': 0, 'res': ''}]
 
 
 def game_view(request):
@@ -10,8 +10,15 @@ def game_view(request):
     elif request.method == 'POST':
         context = input_validation(request)
         if context.get('numbers'):
-            check(context.get('numbers'))
+            if not history[-1].get('secret_num'):
+                history[-1]['secret_num'] = generate_numbers(4)
+                history[-1]['step'] = 0
+            check(history[-1].get('secret_num'), context.get('numbers'))
             context['result'] = history[-1].get('res')
+            if history[-1].get('res') == 'You got it right!':
+                history.append(dict())
+            else:
+                history[-1]['secret_num'] = history[-2]['secret_num']
         return render(request, 'game_page.html', context)
 
 
@@ -41,10 +48,9 @@ def input_validation(request):
     return warnings
 
 
-def check(numbers):
+def check(secret_nums, numbers):
     bulls = 0
     cows = 0
-    secret_nums = [1, 2, 3, 5]
 
     for i in range(len(numbers)):
         if numbers[i] == secret_nums[i]:
@@ -54,9 +60,16 @@ def check(numbers):
 
     step = history[-1]['step']
     if bulls == 4:
-        history.append({'step': step+1, 'res': 'You got it right!'})
+        history.append({'step': step+1, 'res': 'You got it right!', 'secret_num': tuple(history[-1]['secret_num'])})
         return
     history.append({'step': step+1, 'res': f'You got {bulls} bulls, {cows} cows'})
 
 
+def generate_numbers(qty):
+    nums = set()
+    while True:
+        nums.add(randint(1, 10))
+        if len(nums) == qty:
+            print(nums)
+            return list(nums)
 
