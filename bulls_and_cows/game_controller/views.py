@@ -6,6 +6,8 @@ def game_view(request):
         return render(request, 'game_page.html')
     elif request.method == 'POST':
         context = input_validation(request)
+        if context.get('numbers'):
+            context['result'] = check(context.get('numbers'))
         return render(request, 'game_page.html', context)
 
 
@@ -28,3 +30,19 @@ def input_validation(request):
     except ValueError:
         warnings['warning'] = 'Enter only numbers'
     return warnings
+
+
+def check(numbers):
+    bulls = 0
+    cows = 0
+    secret_nums = [1, 2, 3, 5]
+
+    for i in range(len(numbers)):
+        if numbers[i] == secret_nums[i]:
+            bulls += 1
+        elif numbers[i] in secret_nums:
+            cows += 1
+
+    if bulls == 4:
+        return 'You got it right!'
+    return f'You got {bulls} bulls, {cows} cows'
