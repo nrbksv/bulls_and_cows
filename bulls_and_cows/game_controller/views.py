@@ -1,3 +1,9 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def game_view(request):
+    if request.method == 'GET':
+        return render(request, 'game_page.html')
+    elif request.method == 'POST':
+        return render(request, 'game_page.html')
+
