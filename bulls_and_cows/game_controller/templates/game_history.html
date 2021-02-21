@@ -1,0 +1,13 @@
+{% extends 'page_pattern.html' %}
+
+{% block content %}
+    <h5 class="card-title">Game history</h5>
+    <hr>
+    {% for h in history %}
+        {% if h.step > 0 %}
+            <p><i>Step #{{ h.step }}:  <b>{{ h.res }}</b></i></p>
+        {% endif %}
+    {% endfor %}
+    <hr>
+    <a href="/">Back to the game</a>
+{% endblock %}

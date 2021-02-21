@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from random import randint
+
+history = [{'step': 0, 'res': ''}]
 
 
 def game_view(request):
@@ -7,8 +10,14 @@ def game_view(request):
     elif request.method == 'POST':
         context = input_validation(request)
         if context.get('numbers'):
-            context['result'] = check(context.get('numbers'))
+            check(context.get('numbers'))
+            context['result'] = history[-1].get('res')
         return render(request, 'game_page.html', context)
+
+
+def history_view(request):
+    context = {'history': history}
+    return render(request, 'game_history.html', context)
 
 
 def input_validation(request):
@@ -43,6 +52,11 @@ def check(numbers):
         elif numbers[i] in secret_nums:
             cows += 1
 
+    step = history[-1]['step']
     if bulls == 4:
-        return 'You got it right!'
-    return f'You got {bulls} bulls, {cows} cows'
+        history.append({'step': step+1, 'res': 'You got it right!'})
+        return
+    history.append({'step': step+1, 'res': f'You got {bulls} bulls, {cows} cows'})
+
+
+
